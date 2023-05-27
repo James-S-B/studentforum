@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  retrieveTutorials,
-  findTutorialsByTitle,
-  deleteAllTutorials,
-} from "../slices/tutorials";
+  retrievePosts,
+  findPostsByTitle,
+  deleteAllPosts,
+} from "../slices/posts";
 import { Link } from "react-router-dom";
 
-const TutorialsList = () => {
-  const [currentTutorial, setCurrentTutorial] = useState(null);
+const PostsList = () => {
+  const [currentPost, setCurrentPost] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [searchTitle, setSearchTitle] = useState("");
 
-  const tutorials = useSelector(state => state.tutorials);
+  const posts = useSelector(state => state.posts);
   const dispatch = useDispatch();
 
   const onChangeSearchTitle = e => {
@@ -21,7 +21,7 @@ const TutorialsList = () => {
   };
 
   const initFetch = useCallback(() => {
-    dispatch(retrieveTutorials());
+    dispatch(retrievePosts());
   }, [dispatch])
 
   useEffect(() => {
@@ -29,17 +29,17 @@ const TutorialsList = () => {
   }, [initFetch])
 
   const refreshData = () => {
-    setCurrentTutorial(null);
+    setCurrentPost(null);
     setCurrentIndex(-1);
   };
 
-  const setActiveTutorial = (tutorial, index) => {
-    setCurrentTutorial(tutorial);
+  const setActivePost = (post, index) => {
+    setCurrentPost(post);
     setCurrentIndex(index);
   };
 
-  const removeAllTutorials = () => {
-    dispatch(deleteAllTutorials())
+  const removeAllPosts = () => {
+    dispatch(deleteAllPosts())
       .then(response => {
         refreshData();
       })
@@ -50,7 +50,7 @@ const TutorialsList = () => {
 
   const findByTitle = () => {
     refreshData();
-    dispatch(findTutorialsByTitle({ title: searchTitle }));
+    dispatch(findPostsByTitle({ title: searchTitle }));
   };
 
   return (
@@ -76,55 +76,55 @@ const TutorialsList = () => {
         </div>
       </div>
       <div className="col-md-6">
-        <h4>Tutorials List</h4>
+        <h4>Posts List</h4>
 
         <ul className="list-group">
-          {tutorials &&
-            tutorials.map((tutorial, index) => (
+          {posts &&
+            posts.map((post, index) => (
               <li
                 className={
                   "list-group-item " + (index === currentIndex ? "active" : "")
                 }
-                onClick={() => setActiveTutorial(tutorial, index)}
+                onClick={() => setActivePost(post, index)}
                 key={index}
               >
-                {tutorial.title}
+                {post.title}
               </li>
             ))}
         </ul>
 
         <button
           className="m-3 btn btn-sm btn-danger"
-          onClick={removeAllTutorials}
+          onClick={removeAllPosts}
         >
           Remove All
         </button>
       </div>
       <div className="col-md-6">
-        {currentTutorial ? (
+        {currentPost ? (
           <div>
-            <h4>Tutorial</h4>
+            <h4>Post</h4>
             <div>
               <label>
                 <strong>Title:</strong>
               </label>{" "}
-              {currentTutorial.title}
+              {currentPost.title}
             </div>
             <div>
               <label>
                 <strong>Description:</strong>
               </label>{" "}
-              {currentTutorial.description}
+              {currentPost.description}
             </div>
             <div>
               <label>
                 <strong>Status:</strong>
               </label>{" "}
-              {currentTutorial.published ? "Published" : "Pending"}
+              {currentPost.published ? "Published" : "Pending"}
             </div>
 
             <Link
-              to={"/tutorials/" + currentTutorial.id}
+              to={"/posts/" + currentPost.id}
               className="badge badge-warning"
             >
               Edit
@@ -133,7 +133,7 @@ const TutorialsList = () => {
         ) : (
           <div>
             <br />
-            <p>Please click on a Tutorial...</p>
+            <p>Please click on a Post...</p>
           </div>
         )}
       </div>
@@ -141,4 +141,4 @@ const TutorialsList = () => {
   );
 };
 
-export default TutorialsList;
+export default PostsList;

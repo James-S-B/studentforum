@@ -1,28 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useParams, useNavigate } from 'react-router-dom';
-import { updateTutorial, deleteTutorial } from "../slices/tutorials";
-import TutorialDataService from "../services/TutorialService";
+import { updatePost, deletePost } from "../slices/posts";
+import PostDataService from "../services/PostService";
 
-const Tutorial = (props) => {
+const Post = (props) => {
   const { id }= useParams();
   let navigate = useNavigate();
 
-  const initialTutorialState = {
+  const initialPostState = {
     id: null,
     title: "",
     description: "",
     published: false
   };
-  const [currentTutorial, setCurrentTutorial] = useState(initialTutorialState);
+  const [currentPost, setCurrentPost] = useState(initialPostState);
   const [message, setMessage] = useState("");
 
   const dispatch = useDispatch();
 
-  const getTutorial = id => {
-    TutorialDataService.get(id)
+  const getPost = id => {
+    PostDataService.get(id)
       .then(response => {
-        setCurrentTutorial(response.data);
+        setCurrentPost(response.data);
       })
       .catch(e => {
         console.log(e);
@@ -31,27 +31,27 @@ const Tutorial = (props) => {
 
   useEffect(() => {
     if (id)
-      getTutorial(id);
+      getPost(id);
   }, [id]);
 
   const handleInputChange = event => {
     const { name, value } = event.target;
-    setCurrentTutorial({ ...currentTutorial, [name]: value });
+    setCurrentPost({ ...currentPost, [name]: value });
   };
 
   const updateStatus = status => {
     const data = {
-      id: currentTutorial.id,
-      title: currentTutorial.title,
-      description: currentTutorial.description,
+      id: currentPost.id,
+      title: currentPost.title,
+      description: currentPost.description,
       published: status
     };
 
-    dispatch(updateTutorial({ id: currentTutorial.id, data }))
+    dispatch(updatePost({ id: currentPost.id, data }))
       .unwrap()
       .then(response => {
         console.log(response);
-        setCurrentTutorial({ ...currentTutorial, published: status });
+        setCurrentPost({ ...currentPost, published: status });
         setMessage("The status was updated successfully!");
       })
       .catch(e => {
@@ -60,22 +60,22 @@ const Tutorial = (props) => {
   };
 
   const updateContent = () => {
-    dispatch(updateTutorial({ id: currentTutorial.id, data: currentTutorial }))
+    dispatch(updatePost({ id: currentPost.id, data: currentPost }))
       .unwrap()
       .then(response => {
         console.log(response);
-        setMessage("The tutorial was updated successfully!");
+        setMessage("The post was updated successfully!");
       })
       .catch(e => {
         console.log(e);
       });
   };
 
-  const removeTutorial = () => {
-    dispatch(deleteTutorial({ id: currentTutorial.id }))
+  const removePost = () => {
+    dispatch(deletePost({ id: currentPost.id }))
       .unwrap()
       .then(() => {
-        navigate("/tutorials");
+        navigate("/posts");
       })
       .catch(e => {
         console.log(e);
@@ -84,9 +84,9 @@ const Tutorial = (props) => {
 
   return (
     <div>
-      {currentTutorial ? (
+      {currentPost ? (
         <div className="edit-form">
-          <h4>Tutorial</h4>
+          <h4>Post</h4>
           <form>
             <div className="form-group">
               <label htmlFor="title">Title</label>
@@ -95,7 +95,7 @@ const Tutorial = (props) => {
                 className="form-control"
                 id="title"
                 name="title"
-                value={currentTutorial.title}
+                value={currentPost.title}
                 onChange={handleInputChange}
               />
             </div>
@@ -106,7 +106,7 @@ const Tutorial = (props) => {
                 className="form-control"
                 id="description"
                 name="description"
-                value={currentTutorial.description}
+                value={currentPost.description}
                 onChange={handleInputChange}
               />
             </div>
@@ -115,11 +115,11 @@ const Tutorial = (props) => {
               <label>
                 <strong>Status:</strong>
               </label>
-              {currentTutorial.published ? "Published" : "Pending"}
+              {currentPost.published ? "Published" : "Pending"}
             </div>
           </form>
 
-          {currentTutorial.published ? (
+          {currentPost.published ? (
             <button
               className="badge badge-primary mr-2"
               onClick={() => updateStatus(false)}
@@ -135,7 +135,7 @@ const Tutorial = (props) => {
             </button>
           )}
 
-          <button className="badge badge-danger mr-2" onClick={removeTutorial}>
+          <button className="badge badge-danger mr-2" onClick={removePost}>
             Delete
           </button>
 
@@ -151,11 +151,11 @@ const Tutorial = (props) => {
       ) : (
         <div>
           <br />
-          <p>Please click on a Tutorial...</p>
+          <p>Please click on a Post...</p>
         </div>
       )}
     </div>
   );
 };
 
-export default Tutorial;
+export default Post;

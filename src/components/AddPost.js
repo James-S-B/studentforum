@@ -1,32 +1,32 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { createTutorial } from "../slices/tutorials";
+import { createPost } from "../slices/posts";
 
-const AddTutorial = () => {
-  const initialTutorialState = {
+const AddPost = () => {
+  const initialPostState = {
     id: null,
     title: "",
     description: "",
     published: false
   };
-  const [tutorial, setTutorial] = useState(initialTutorialState);
+  const [post, setPost] = useState(initialPostState);
   const [submitted, setSubmitted] = useState(false);
 
   const dispatch = useDispatch();
 
   const handleInputChange = event => {
     const { name, value } = event.target;
-    setTutorial({ ...tutorial, [name]: value });
+    setPost({ ...post, [name]: value });
   };
 
-  const saveTutorial = () => {
-    const { title, description } = tutorial;
+  const savePost = () => {
+    const { title, description } = post;
 
-    dispatch(createTutorial({ title, description }))
+    dispatch(createPost({ title, description }))
       .unwrap()
       .then(data => {
         console.log(data);
-        setTutorial({
+        setPost({
           id: data.id,
           title: data.title,
           description: data.description,
@@ -39,8 +39,8 @@ const AddTutorial = () => {
       });
   };
 
-  const newTutorial = () => {
-    setTutorial(initialTutorialState);
+  const newPost = () => {
+    newPost(initialPostState);
     setSubmitted(false);
   };
 
@@ -49,7 +49,7 @@ const AddTutorial = () => {
       {submitted ? (
         <div>
           <h4>You submitted successfully!</h4>
-          <button className="btn btn-success" onClick={newTutorial}>
+          <button className="btn btn-success" onClick={newPost}>
             Add
           </button>
         </div>
@@ -62,7 +62,7 @@ const AddTutorial = () => {
               className="form-control"
               id="title"
               required
-              value={tutorial.title || ''}
+              value={post.title || ''}
               onChange={handleInputChange}
               name="title"
             />
@@ -75,13 +75,13 @@ const AddTutorial = () => {
               className="form-control"
               id="description"
               required
-              value={tutorial.description || ''}
+              value={post.description || ''}
               onChange={handleInputChange}
               name="description"
             />
           </div>
 
-          <button onClick={saveTutorial} className="btn btn-success">
+          <button onClick={savePost} className="btn btn-success">
             Submit
           </button>
         </div>
@@ -90,4 +90,4 @@ const AddTutorial = () => {
   );
 };
 
-export default AddTutorial;
+export default AddPost;
